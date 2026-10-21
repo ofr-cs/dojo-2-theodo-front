@@ -1,6 +1,6 @@
 import {inject, Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
-import {Observable} from "rxjs";
+import {map, Observable} from "rxjs";
 import {ResponseWord} from "../model/responseWord.model";
 import {GuessWord} from "../model/guessWord.model";
 
@@ -10,7 +10,9 @@ import {GuessWord} from "../model/guessWord.model";
 export class ApiClientService {
   private httpClient = inject(HttpClient);
 
-  public getPokemonValue(guess: GuessWord): Observable<ResponseWord>{
-    return this.httpClient.get<ResponseWord>(`https://pokeapi.co/api/v2/pokemon/${guess}`)
+  public getWordDistance(guess: GuessWord): Observable<ResponseWord>{
+    return this.httpClient.get<{ result: number }>(`https://dojo-2-theodo.ofr-cs.deno.net/${guess.value}`).pipe(
+      map(response => ({ value: Math.round(response.result * 100) }))
+    );
   }
 }
